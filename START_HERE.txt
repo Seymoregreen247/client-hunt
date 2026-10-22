@@ -1,0 +1,113 @@
+CLIENT HUNT — NETLIFY + GOOGLE SHEETS CONNECTION
+
+Your app design, 83 starting accounts, local records and backup tools are retained.
+This package adds private sign-in and Google Sheet load/save through a Netlify Function.
+The Google API key is never embedded in index.html or committed to GitHub.
+
+CONTENTS
+public/index.html               Updated app
+netlify/functions/client-hunt.mjs Private server connection
+netlify.toml                    Deployment settings
+.gitignore                      Excludes local secrets
+START_HERE.txt                  These instructions
+
+1. BACK UP YOUR CURRENT APP
+Open your existing Client Hunt app and click Backup. Keep the downloaded JSON.
+If you deploy to a different site/domain, restore this JSON there before choosing
+Upload this workspace. Browser records do not move automatically between domains.
+
+2. ADD THE WHOLE PACKAGE TO GITHUB
+Unzip this download. Upload the CONTENTS of client-hunt-netlify into the root of
+your repository, preserving the public/ and netlify/functions/ folders.
+Do not upload only index.html: a static HTML file alone cannot keep a secret
+Google API key private. Do not upload the ZIP file itself as the site.
+You may remove an older root index.html to avoid confusion; Netlify publishes
+public/ using the supplied netlify.toml.
+
+3. DEPLOY THE REPOSITORY ON NETLIFY
+Connect the repository. No build command or npm installation is required.
+Publish directory: public
+Functions directory: netlify/functions (already set in netlify.toml).
+Use a current supported Node runtime (Node 22 or newer).
+
+4. SET TWO PRIVATE NETLIFY ENVIRONMENT VARIABLES
+In your Netlify project's Environment variables settings, add:
+
+CLIENT_HUNT_API_KEY
+  Value: the MAIN CRM key from your Google Sheet's Client Hunt menu >
+  Connection settings. Copy it privately into Netlify. Do not paste it into chat,
+  GitHub or the HTML. Do not use the restricted inquiry key.
+
+CLIENT_HUNT_APP_PASSWORD
+  Value: a strong, unique password you choose, at least 20 characters long.
+  This is your Client Hunt password, NOT your Google or Netlify account password.
+  You type it into Client Hunt's Connect Sheet window.
+
+Include Functions/runtime scope. Variables in netlify.toml do NOT provide
+runtime secrets to this function. After adding or changing variables, redeploy.
+
+Optional CLIENT_HUNT_SCRIPT_URL:
+https://script.google.com/macros/s/AKfycbyxH0ERXEYK6xQfPbN9WJ_1ZUhRzEhLw2iEMwODG7IOeCnLuewHeVallEZ5Fz9l2ghr/exec
+This exact URL is already the non-secret default in the server file. Set this
+variable only if you deploy a different Apps Script endpoint later.
+
+5. CHECK YOUR APPS SCRIPT DEPLOYMENT
+Use the Apps Script file previously supplied for Client Hunt.
+Run setupClientHunt once before connecting.
+Deploy as Web app; Execute as: Me; Who has access: Anyone.
+Keep the actual Google Sheet private. The API key controls data access.
+If your organization prohibits Anyone access, this backend needs a different
+authentication approach; do not weaken organizational settings.
+
+Open the /exec URL in a private/incognito browser window. A functioning public
+endpoint should display JSON naming Client Hunt, WITHOUT asking you to log in.
+This only checks the public status endpoint, not private reads/writes.
+If Google asks for login or shows permission denied, review deployment settings.
+If you changed Code.gs after deployment, use Deploy > Manage deployments >
+Edit > New version > Deploy, then use the correct /exec URL.
+
+6. CONNECT AND INITIALIZE
+Open the deployed Netlify app. Click Connect Sheet.
+Enter the CLIENT_HUNT_APP_PASSWORD you set in Netlify.
+If the Sheet is empty, click Upload this workspace. This uploads your local
+accounts, contacts, notes, opportunities, follow-ups and settings together.
+If the Sheet already has records, choose Load Google Sheet or explicitly choose
+to replace it with this device's copy. Back up unsynced local work first.
+After the app says Saved to Sheet, open the Google Sheet and confirm account rows.
+
+7. USE IT ON YOUR PHONE / ANOTHER COMPUTER
+Open the SAME Netlify site, click Connect Sheet, sign in, then Load Google Sheet.
+While connected, changes save automatically after a short pause.
+The cloud sign-in lasts up to 8 hours. Your password is not saved in browser storage;
+a Secure, HttpOnly session cookie is used. Signing out clears this browser's session.
+Changing the app password and redeploying invalidates sessions using the old password.
+A disconnected/offline app retains its local records; reconnect and choose the
+right version before cloud saving resumes. Keep one editing tab per device.
+The app does not continuously pull changes from other devices. Use Load latest
+from Sheet when switching devices. Revision checks stop stale copies overwriting
+newer cloud changes. Copies are not automatically merged.
+If a save times out, use Save now to retry the same pending request safely.
+
+IMPORTANT DETAILS
+- Visible Google Sheet tabs are reporting views. Direct edits to them are not
+  imported into the app. Manage records in Client Hunt; use Sheets for reporting.
+- Do not delete or rename _CH_Snapshots or other generated tabs.
+- You still have JSON backups and CSV exports. Keep backups regularly.
+- The existing Apps Script does not send emails automatically.
+- Netlify Forms and Zapier have NOT been enabled by this package. They can be
+  connected later. The separate lead API key from the script can support an
+  approved Zapier inquiry workflow without granting CRM read access.
+- This package is for Netlify. The previously hosted ChatGPT Site is unchanged.
+- Serving public/index.html directly works in local mode, but cannot cloud-sync
+  without its deployed server function.
+- Local code checks passed; a live authenticated Google save could not be tested
+  without your private key and Netlify configuration. The supplied /exec endpoint
+  returned HTTP 403 in this environment; its availability is not yet verified.
+
+TROUBLESHOOTING
+Cloud function unavailable: deploy the full folder structure and netlify.toml.
+Not configured: add both environment variables in Functions scope and redeploy.
+Password did not match: use your Client Hunt app password from Netlify.
+Google did not return CRM API: check web-app access, version and /exec URL.
+API key mismatch: copy the MAIN key from the correct Sheet's connection settings.
+Review newer changes: back up local work, load the Sheet, then reapply your edits.
